@@ -79,10 +79,7 @@ class Cache
             throw new \InvalidArgumentException(sprintf('Driver %s not exist', $currentDriver));
         }
 
-        //TODO If driver component not loaded, throw an exception.
-
-        $bean = ObjectFactory::get($drivers[$currentDriver]);
-        return $bean;
+        return $drivers[$currentDriver];
     }
 
     /**
