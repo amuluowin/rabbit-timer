@@ -17,7 +17,7 @@ use Swoole\Table;
  * Class Cache
  * @package rabbit\cache
  */
-class Cache
+class Cache implements CacheInterface
 {
     /**
      * @var string
@@ -44,30 +44,6 @@ class Cache
     }
 
     /**
-     * @param $method
-     * @param $arguments
-     * @return mixed
-     */
-    public function __call($method, $arguments)
-    {
-        $availableMethods = [
-            'has',
-            'get',
-            'set',
-            'delete',
-            'getMultiple',
-            'setMultiple',
-            'deleteMultiple',
-            'clear',
-        ];
-        if (!\in_array($method, $availableMethods, true)) {
-            throw new \RuntimeException(sprintf('Method not exist, method=%s', $method));
-        }
-        $driver = $this->getDriver();
-        return $driver->$method(...$arguments);
-    }
-
-    /**
      * @param string|null $driver
      * @return CacheInterface
      */
@@ -90,4 +66,86 @@ class Cache
         return $this->drivers;
     }
 
+    /**
+     * @param string $key
+     * @param null $default
+     * @return mixed|void
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     */
+    public function get($key, $default = null)
+    {
+        $this->getDriver()->get($key, $default);
+    }
+
+    /**
+     * @param string $key
+     * @param mixed $value
+     * @param null $ttl
+     * @return bool|void
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     */
+    public function set($key, $value, $ttl = null)
+    {
+        $this->getDriver()->set($key, $value, $ttl);
+    }
+
+    /**
+     * @param string $key
+     * @return bool|void
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     */
+    public function delete($key)
+    {
+        $this->getDriver()->delete($key);
+    }
+
+    /**
+     * @return bool|void
+     */
+    public function clear()
+    {
+        $this->getDriver()->clear();
+    }
+
+    /**
+     * @param iterable $keys
+     * @param null $default
+     * @return iterable|void
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     */
+    public function getMultiple($keys, $default = null)
+    {
+        $this->getDriver()->getMultiple($keys, $default);
+    }
+
+    /**
+     * @param iterable $values
+     * @param null $ttl
+     * @return bool|void
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     */
+    public function setMultiple($values, $ttl = null)
+    {
+        $this->getDriver()->setMultiple($values, $ttl);
+    }
+
+    /**
+     * @param iterable $keys
+     * @return bool|void
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     */
+    public function deleteMultiple($keys)
+    {
+        $this->getDriver()->deleteMultiple($keys);
+    }
+
+    /**
+     * @param string $key
+     * @return bool|void
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     */
+    public function has($key)
+    {
+        $this->getDriver()->has($key);
+    }
 }
