@@ -9,7 +9,6 @@
 namespace rabbit\cache;
 
 use Psr\SimpleCache\CacheInterface;
-use rabbit\core\ObjectFactory;
 use rabbit\parser\ParserInterface;
 use Swoole\Table;
 
@@ -37,9 +36,9 @@ class Cache implements CacheInterface
     /**
      * Cache constructor.
      */
-    public function __construct(array $drivers)
+    public function __construct(array $drivers, ParserInterface $serializer = null)
     {
-        $this->serializer = ObjectFactory::get('cache.serializer ', false);
+        $this->serializer = $serializer;
         $this->drivers = $drivers;
     }
 
