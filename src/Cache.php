@@ -68,83 +68,83 @@ class Cache implements CacheInterface
     /**
      * @param string $key
      * @param null $default
-     * @return mixed|void
+     * @return mixed
      * @throws \Psr\SimpleCache\InvalidArgumentException
      */
     public function get($key, $default = null)
     {
-        $this->getDriver()->get($key, $default);
+        return $this->getDriver()->get($key, $default);
     }
 
     /**
      * @param string $key
      * @param mixed $value
      * @param null $ttl
-     * @return bool|void
+     * @return bool
      * @throws \Psr\SimpleCache\InvalidArgumentException
      */
     public function set($key, $value, $ttl = null)
     {
-        $this->getDriver()->set($key, $value, $ttl);
+        return $this->getDriver()->set($key, $value, $ttl);
     }
 
     /**
      * @param string $key
-     * @return bool|void
+     * @return bool
      * @throws \Psr\SimpleCache\InvalidArgumentException
      */
     public function delete($key)
     {
-        $this->getDriver()->delete($key);
+        return $this->getDriver()->delete($key);
     }
 
     /**
-     * @return bool|void
+     * @return bool
      */
     public function clear()
     {
-        $this->getDriver()->clear();
+        return $this->getDriver()->clear();
     }
 
     /**
      * @param iterable $keys
      * @param null $default
-     * @return iterable|void
+     * @return iterable
      * @throws \Psr\SimpleCache\InvalidArgumentException
      */
     public function getMultiple($keys, $default = null)
     {
-        $this->getDriver()->getMultiple($keys, $default);
+        return $this->getDriver()->getMultiple($keys, $default);
     }
 
     /**
      * @param iterable $values
      * @param null $ttl
-     * @return bool|void
+     * @return bool
      * @throws \Psr\SimpleCache\InvalidArgumentException
      */
     public function setMultiple($values, $ttl = null)
     {
-        $this->getDriver()->setMultiple($values, $ttl);
+        return $this->getDriver()->setMultiple($values, $ttl);
     }
 
     /**
      * @param iterable $keys
-     * @return bool|void
+     * @return bool
      * @throws \Psr\SimpleCache\InvalidArgumentException
      */
     public function deleteMultiple($keys)
     {
-        $this->getDriver()->deleteMultiple($keys);
+        return $this->getDriver()->deleteMultiple($keys);
     }
 
     /**
      * @param string $key
-     * @return bool|void
+     * @return bool
      * @throws \Psr\SimpleCache\InvalidArgumentException
      */
     public function has($key)
     {
-        $this->getDriver()->has($key);
+        return $this->getDriver()->has($key);
     }
 }
