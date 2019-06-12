@@ -31,7 +31,7 @@ class AbstractCache
     protected function buildKey($key): string
     {
         if (is_string($key)) {
-            $key = ctype_alnum($key) && StringHelper::byteLength($key) <= 32 ? $key : md5($key);
+            $key = StringHelper::byteLength($key) <= 32 ? $key : md5($key);
         } else {
             if ($this->_igbinaryAvailable) {
                 $serializedKey = igbinary_serialize($key);
