@@ -14,14 +14,14 @@ class AbstractCache
     /**
      * @var bool whether [igbinary serialization](https://pecl.php.net/package/igbinary) is available or not.
      */
-    private $_igbinaryAvailable = false;
+    private $igbinaryAvailable = false;
 
     /**
      * AbstractCache constructor.
      */
     public function __construct()
     {
-        $this->_igbinaryAvailable = \extension_loaded('igbinary');
+        $this->igbinaryAvailable = \extension_loaded('igbinary');
     }
 
     /**
@@ -33,7 +33,7 @@ class AbstractCache
         if (is_string($key)) {
             $key = StringHelper::byteLength($key) <= 32 ? $key : md5($key);
         } else {
-            if ($this->_igbinaryAvailable) {
+            if ($this->igbinaryAvailable) {
                 $serializedKey = igbinary_serialize($key);
             } else {
                 $serializedKey = serialize($key);
