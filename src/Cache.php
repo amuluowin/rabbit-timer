@@ -10,7 +10,6 @@ namespace rabbit\cache;
 
 use Psr\SimpleCache\CacheInterface;
 use rabbit\parser\ParserInterface;
-use Swoole\Table;
 
 /**
  * Class Cache
@@ -55,6 +54,25 @@ class Cache implements CacheInterface
         }
 
         return $drivers[$currentDriver];
+    }
+
+    /**
+     * @param string $key
+     * @param callable $function
+     * @param int $duration
+     * @param string $driver
+     * @return mixed
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     */
+    public function cache(string $key, callable $function, int $duration = 0, string $driver = 'memory')
+    {
+        $driver = $this->getDriver($driver);
+        if ($driver->has($key)) {
+            return \igbinary_unserialize($driver->get($key));
+        }
+        $result = $function();
+        $driver->set($key, \igbinary_serialize($result), $driver);
+        return $result;
     }
 
     /**
