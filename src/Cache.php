@@ -1,15 +1,11 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Administrator
- * Date: 2018/10/24
- * Time: 18:00
- */
+declare(strict_types=1);
 
-namespace rabbit\cache;
+namespace Rabbit\Cache;
 
 use Psr\SimpleCache\CacheInterface;
-use rabbit\parser\ParserInterface;
+use Psr\SimpleCache\InvalidArgumentException;
+use Rabbit\Parser\ParserInterface;
 
 /**
  * Class Cache
@@ -20,20 +16,22 @@ class Cache implements CacheInterface
     /**
      * @var string
      */
-    private $driver = 'memory';
+    private string $driver = 'memory';
 
     /**
      * @var array
      */
-    private $drivers = [];
+    private array $drivers = [];
 
     /**
      * @var ParserInterface|null
      */
-    private $serializer = null;
+    private ?ParserInterface $serializer = null;
 
     /**
      * Cache constructor.
+     * @param array $drivers
+     * @param ParserInterface|null $serializer
      */
     public function __construct(array $drivers, ParserInterface $serializer = null)
     {
@@ -62,7 +60,7 @@ class Cache implements CacheInterface
      * @param int $duration
      * @param string $driver
      * @return mixed
-     * @throws \Psr\SimpleCache\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function cache(string $key, callable $function, int $duration = 0, string $driver = 'memory')
     {
@@ -87,7 +85,7 @@ class Cache implements CacheInterface
      * @param string $key
      * @param null $default
      * @return mixed
-     * @throws \Psr\SimpleCache\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function get($key, $default = null)
     {
@@ -99,7 +97,7 @@ class Cache implements CacheInterface
      * @param mixed $value
      * @param null $ttl
      * @return bool
-     * @throws \Psr\SimpleCache\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function set($key, $value, $ttl = null)
     {
@@ -109,7 +107,7 @@ class Cache implements CacheInterface
     /**
      * @param string $key
      * @return bool
-     * @throws \Psr\SimpleCache\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function delete($key)
     {
@@ -128,7 +126,7 @@ class Cache implements CacheInterface
      * @param iterable $keys
      * @param null $default
      * @return iterable
-     * @throws \Psr\SimpleCache\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function getMultiple($keys, $default = null)
     {
@@ -139,7 +137,7 @@ class Cache implements CacheInterface
      * @param iterable $values
      * @param null $ttl
      * @return bool
-     * @throws \Psr\SimpleCache\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function setMultiple($values, $ttl = null)
     {
@@ -149,7 +147,7 @@ class Cache implements CacheInterface
     /**
      * @param iterable $keys
      * @return bool
-     * @throws \Psr\SimpleCache\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function deleteMultiple($keys)
     {
@@ -159,7 +157,7 @@ class Cache implements CacheInterface
     /**
      * @param string $key
      * @return bool
-     * @throws \Psr\SimpleCache\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function has($key)
     {

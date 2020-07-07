@@ -1,9 +1,10 @@
 <?php
+declare(strict_types=1);
 
+namespace Rabbit\Cache;
 
-namespace rabbit\cache;
-
-use rabbit\helper\StringHelper;
+use Rabbit\Base\Helper\StringHelper;
+use function extension_loaded;
 
 /**
  * Class AbstractCache
@@ -14,14 +15,14 @@ class AbstractCache
     /**
      * @var bool whether [igbinary serialization](https://pecl.php.net/package/igbinary) is available or not.
      */
-    private $igbinaryAvailable = false;
+    private bool $igbinaryAvailable = false;
 
     /**
      * AbstractCache constructor.
      */
     public function __construct()
     {
-        $this->igbinaryAvailable = \extension_loaded('igbinary');
+        $this->igbinaryAvailable = extension_loaded('igbinary');
     }
 
     /**
