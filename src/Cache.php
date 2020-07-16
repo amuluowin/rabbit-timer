@@ -57,12 +57,12 @@ class Cache implements CacheInterface
     /**
      * @param string $key
      * @param callable $function
-     * @param int $duration
+     * @param float $duration
      * @param string $driver
      * @return mixed
      * @throws InvalidArgumentException
      */
-    public function cache(string $key, callable $function, int $duration = 0, string $driver = 'memory')
+    public function cache(string $key, callable $function, float $duration = 0, string $driver = 'memory')
     {
         $driver = $this->getDriver($driver);
         if ($driver->has($key)) {
