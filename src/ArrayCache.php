@@ -6,13 +6,14 @@ namespace Rabbit\Cache;
 
 use Psr\SimpleCache\CacheInterface;
 use Rabbit\Base\App;
+use Rabbit\Base\Helper\ArrayHelper;
 use Rabbit\Parser\ParserInterface;
 use Throwable;
 
 class ArrayCache extends AbstractCache implements CacheInterface
 {
     private ?ParserInterface $serializer;
-    private array $tableInstance;
+    private array $tableInstance = [];
     private int $maxLive = 3000000;
     private float $gcSleep = 0.01;
     private int $gcProbability = 100;
@@ -31,7 +32,7 @@ class ArrayCache extends AbstractCache implements CacheInterface
     {
         $key = $this->buildKey($key);
         $value = $this->getValue($key);
-        if ($value === false) {
+        if ($value === null) {
             return $default;
         } elseif ($this->serializer === null) {
             return unserialize($value);
@@ -45,7 +46,7 @@ class ArrayCache extends AbstractCache implements CacheInterface
      * @param int $nowtime
      * @return bool|string
      */
-    private function getValue(string $key, int $nowtime = null)
+    private function getValue(string $key, int $nowtime = null): ?string
     {
         if (empty($key)) {
             return '';
@@ -53,14 +54,14 @@ class ArrayCache extends AbstractCache implements CacheInterface
         if (empty($nowtime)) {
             $nowtime = time();
         }
-        $column = $this->tableInstance[$key];
-        if ($column === false) {
-            return false;
+        $column = ArrayHelper::getValue($this->tableInstance, $key);
+        if ($column === null) {
+            return null;
         }
 
         if ($column['expire'] > 0 && $column['expire'] < $nowtime) {
             unset($this->tableInstance[$key]);
-            return false;
+            return null;
         }
 
         return $column['data'];
