@@ -61,6 +61,7 @@ class ArrayCache extends AbstractCache implements CacheInterface
 
         if ($column['expire'] > 0 && $column['expire'] < $nowtime) {
             unset($this->tableInstance[$key]);
+            $this->tableInstance = array_slice($this->tableInstance, 0, null, true);
             return null;
         }
 
@@ -112,7 +113,7 @@ class ArrayCache extends AbstractCache implements CacheInterface
     private function gc(bool $force = false)
     {
         if ($force || mt_rand(0, 1000000) < $this->gcProbability) {
-            App::info("ArrayCache GC begin");
+            App::debug("ArrayCache GC begin");
             $i = 100000;
             $table = $this->tableInstance;
             foreach ($table as $key => $column) {
@@ -121,11 +122,12 @@ class ArrayCache extends AbstractCache implements CacheInterface
                 }
                 $i--;
                 if ($i <= 0) {
-                    usleep($this->gcSleep * 1000 * 1000);
+                    usleep((int)($this->gcSleep * 1000 * 1000));
                     $i = 100000;
                 }
             }
-            App::info("ArrayCache GC end.");
+            $this->tableInstance = array_slice($this->tableInstance, 0, null, true);
+            App::debug("ArrayCache GC end.");
         }
     }
 
@@ -137,6 +139,7 @@ class ArrayCache extends AbstractCache implements CacheInterface
     {
         $this->buildKey($key);
         unset($this->tableInstance[$key]);
+        $this->tableInstance = array_slice($this->tableInstance, 0, null, true);
         return true;
     }
 
@@ -201,7 +204,7 @@ class ArrayCache extends AbstractCache implements CacheInterface
             unset($this->tableInstance[$this->buildKey($key)]);
             $failedKeys[] = $key;
         }
-
+        $this->tableInstance = array_slice($this->tableInstance, 0, null, true);
         return $failedKeys;
     }
 
