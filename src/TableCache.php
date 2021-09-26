@@ -198,11 +198,19 @@ class TableCache extends AbstractCache implements CacheInterface
         }
     }
 
-    private function setValueRec(string $key, string &$value, ?float $expire, int $valueLength, int $num = 0): null|bool|string
+    /**
+     * @param string $key
+     * @param string $value
+     * @param float|null $expire
+     * @param int $valueLength
+     * @param int $num
+     * @return string|null
+     */
+    private function setValueRec(string $key, string &$value, ?float $expire, int $valueLength, int $num = 0): ?string
     {
         $start = $num * $this->dataLength;
         if ($start > $valueLength) {
-            return false;
+            return '';
         }
         $nextNum = $num + 1;
         $nextId = $this->setValueRec($key, $value, $expire, $valueLength, $nextNum);
