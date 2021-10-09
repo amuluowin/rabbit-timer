@@ -61,7 +61,6 @@ class ArrayCache extends AbstractCache implements CacheInterface
 
         if ($column['expire'] > 0 && $column['expire'] < $nowtime) {
             unset($this->tableInstance[$key]);
-            $this->tableInstance = array_slice($this->tableInstance, 0, null, true);
             return null;
         }
 
@@ -126,7 +125,6 @@ class ArrayCache extends AbstractCache implements CacheInterface
                     $i = 100000;
                 }
             }
-            $this->tableInstance = array_slice($this->tableInstance, 0, null, true);
             App::debug("ArrayCache GC end.");
         }
     }
@@ -139,7 +137,6 @@ class ArrayCache extends AbstractCache implements CacheInterface
     {
         $this->buildKey($key);
         unset($this->tableInstance[$key]);
-        $this->tableInstance = array_slice($this->tableInstance, 0, null, true);
         return true;
     }
 
@@ -204,7 +201,6 @@ class ArrayCache extends AbstractCache implements CacheInterface
             unset($this->tableInstance[$this->buildKey($key)]);
             $failedKeys[] = $key;
         }
-        $this->tableInstance = array_slice($this->tableInstance, 0, null, true);
         return $failedKeys;
     }
 
