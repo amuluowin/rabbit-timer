@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Rabbit\Cache;
@@ -48,7 +49,11 @@ class Cache implements CacheInterface
         $currentDriver = $driver ?? $this->driver;
         $drivers = $this->getDrivers();
         if (!isset($drivers[$currentDriver])) {
-            throw new \InvalidArgumentException(sprintf('Driver %s not exist', $currentDriver));
+            if (extension_loaded('yac')) {
+                return new \Yac($driver);
+            } else {
+                throw new \InvalidArgumentException(sprintf('Driver %s not exist', $currentDriver));
+            }
         }
 
         return $drivers[$currentDriver];
@@ -66,10 +71,10 @@ class Cache implements CacheInterface
     {
         $driver = $this->getDriver($driver);
         if ($driver->has($key)) {
-            return \igbinary_unserialize($driver->get($key));
+            return $this->serializer ? $this->serializer->decode($driver->get($key)) : \igbinary_unserialize($driver->get($key));
         }
         $result = $function();
-        $driver->set($key, \igbinary_serialize($result), $driver);
+        $driver->set($key, $this->serializer ? $this->serializer->encode($result) : \igbinary_serialize($result), $duration);
         return $result;
     }
 
