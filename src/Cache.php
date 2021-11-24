@@ -50,7 +50,7 @@ class Cache implements CacheInterface
         $drivers = $this->getDrivers();
         if (!isset($drivers[$currentDriver])) {
             if (extension_loaded('yac')) {
-                return new YacCache($driver);
+                return new YacCache();
             } else {
                 throw new \InvalidArgumentException(sprintf('Driver %s not exist', $currentDriver));
             }
