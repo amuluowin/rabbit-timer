@@ -18,17 +18,17 @@ class YacCache extends AbstractCache implements CacheInterface
 
     public function get($key, $default = null)
     {
-        return $this->yac->get($this->buildKey($key));
+        return $this->yac->get($key);
     }
 
     public function set($key, $value, $ttl = null)
     {
-        return $this->yac->set($this->buildKey($key), $value, $ttl);
+        return $this->yac->set($key, $value, $ttl);
     }
 
     public function delete($key)
     {
-        return $this->yac->delete($this->buildKey($key));
+        return $this->yac->delete($key);
     }
 
     public function clear()
@@ -53,6 +53,6 @@ class YacCache extends AbstractCache implements CacheInterface
 
     public function has($key)
     {
-        return $this->yac->get($this->buildKey($key)) === false;
+        return $this->yac->get($key) === false;
     }
 }
