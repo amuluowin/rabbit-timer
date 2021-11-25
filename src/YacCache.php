@@ -13,7 +13,7 @@ class YacCache extends AbstractCache implements CacheInterface
 
     public function __construct(string $key = null)
     {
-        $this->yac = new Yac($key ?? 'yac');
+        $this->yac = new Yac($key ?? 'yac:');
     }
 
     public function get($key, $default = null)
@@ -23,7 +23,7 @@ class YacCache extends AbstractCache implements CacheInterface
 
     public function set($key, $value, $ttl = null)
     {
-        return $this->yac->set($key, $value, $ttl);
+        return $ttl === null ? $this->yac->set($key, $value) : $this->yac->set($key, $value, $ttl);
     }
 
     public function delete($key)
@@ -43,7 +43,7 @@ class YacCache extends AbstractCache implements CacheInterface
 
     public function setMultiple($values, $ttl = null)
     {
-        $this->yac->set($values, $ttl);
+        return $ttl === null ? $this->yac->set($values) : $this->yac->set($values, $ttl);
     }
 
     public function deleteMultiple($keys)
