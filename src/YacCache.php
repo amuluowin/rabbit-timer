@@ -13,7 +13,7 @@ class YacCache extends AbstractCache implements CacheInterface
 
     public function __construct(string $key = null)
     {
-        $this->yac = new Yac($key);
+        $this->yac = new Yac($key ?? 'yac');
     }
 
     public function get($key, $default = null)
