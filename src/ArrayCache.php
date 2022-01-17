@@ -12,15 +12,13 @@ use Throwable;
 
 class ArrayCache extends AbstractCache implements CacheInterface
 {
-    private ?ParserInterface $serializer;
     private array $tableInstance = [];
     private int $maxLive = 3000000;
     private float $gcSleep = 0.01;
     private int $gcProbability = 100;
-    public function __construct(ParserInterface $serializer = null)
+    public function __construct(private ?ParserInterface $serializer = null)
     {
         parent::__construct();
-        $this->serializer = $serializer;
     }
 
     /**

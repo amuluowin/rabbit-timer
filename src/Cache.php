@@ -14,30 +14,15 @@ use Rabbit\Parser\ParserInterface;
  */
 class Cache implements CacheInterface
 {
-    /**
-     * @var string
-     */
     private string $driver = 'memory';
-
-    /**
-     * @var array
-     */
-    private array $drivers = [];
-
-    /**
-     * @var ParserInterface|null
-     */
-    private ?ParserInterface $serializer = null;
 
     /**
      * Cache constructor.
      * @param array $drivers
      * @param ParserInterface|null $serializer
      */
-    public function __construct(array $drivers, ParserInterface $serializer = null)
+    public function __construct(private array $drivers, private ?ParserInterface $serializer = null)
     {
-        $this->serializer = $serializer;
-        $this->drivers = $drivers;
     }
 
     /**

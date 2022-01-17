@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Rabbit\Cache;
@@ -12,14 +13,8 @@ use function extension_loaded;
  */
 class AbstractCache
 {
-    /**
-     * @var bool whether [igbinary serialization](https://pecl.php.net/package/igbinary) is available or not.
-     */
-    private bool $igbinaryAvailable = false;
+    protected readonly bool $igbinaryAvailable;
 
-    /**
-     * AbstractCache constructor.
-     */
     public function __construct()
     {
         $this->igbinaryAvailable = extension_loaded('igbinary');

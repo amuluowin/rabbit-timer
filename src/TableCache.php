@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Rabbit\Cache;
@@ -15,35 +16,9 @@ use Throwable;
  */
 class TableCache extends AbstractCache implements CacheInterface
 {
-    /**
-     * @var ParserInterface|null
-     */
-    private ?ParserInterface $serializer;
-
-    /**
-     * @var Table
-     */
     private Table $tableInstance;
-
-    /**
-     * @var int
-     */
-    private int $dataLength;
-
-    /**
-     * the max expire of cache limited by this value
-     * @var int
-     */
     private int $maxLive = 3000000;
-    /**
-     * @var float Gc process will sleep $gcSleep second each 100000 times
-     */
     private float $gcSleep = 0.01;
-    /**
-     * @var int the probability (parts per million) that garbage collection (GC) should be performed
-     * when storing a piece of data in the cache. Defaults to 100, meaning 0.01% chance.
-     * This number should be between 0 and 1000000. A value 0 meaning no GC will be performed at all.
-     */
     private int $gcProbability = 100;
 
     /**
@@ -52,12 +27,10 @@ class TableCache extends AbstractCache implements CacheInterface
      * @param int $dataLength
      * @param ParserInterface|null $serializer
      */
-    public function __construct(int $size = 1024, int $dataLength = 8192, ParserInterface $serializer = null)
+    public function __construct(int $size = 1024, private int $dataLength = 8192, private ?ParserInterface $serializer = null)
     {
         parent::__construct();
         $this->tableInstance = $this->initCacheTable($size, $dataLength);
-        $this->serializer = $serializer;
-        $this->dataLength = $dataLength;
     }
 
     /**
