@@ -23,7 +23,7 @@ class YacCache extends AbstractCache implements CacheInterface
 
     public function set($key, $value, $ttl = null)
     {
-        return $ttl === null ? $this->yac->set($key, $value) : $this->yac->set($key, $value, $ttl);
+        return $ttl === null ? $this->yac->set($key, $value) : $this->yac->set($key, $value, (int)$ttl);
     }
 
     public function delete($key)
@@ -53,6 +53,6 @@ class YacCache extends AbstractCache implements CacheInterface
 
     public function has($key)
     {
-        return $this->yac->get($key) === false;
+        return $this->yac->get($key) !== false;
     }
 }
