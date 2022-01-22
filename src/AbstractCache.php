@@ -13,11 +13,11 @@ use function extension_loaded;
  */
 class AbstractCache
 {
-    protected readonly bool $igbinaryAvailable;
+    protected readonly bool $msgAvailable;
 
     public function __construct()
     {
-        $this->igbinaryAvailable = extension_loaded('igbinary');
+        $this->msgAvailable = extension_loaded('msgpack');
     }
 
     /**
@@ -29,8 +29,8 @@ class AbstractCache
         if (is_string($key)) {
             $key = StringHelper::byteLength($key) <= 32 ? $key : md5($key);
         } else {
-            if ($this->igbinaryAvailable) {
-                $serializedKey = igbinary_serialize($key);
+            if ($this->msgAvailable) {
+                $serializedKey = \msgpack_pack($key);
             } else {
                 $serializedKey = serialize($key);
             }

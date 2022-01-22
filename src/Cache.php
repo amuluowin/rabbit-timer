@@ -56,10 +56,10 @@ class Cache implements CacheInterface
     {
         $driver = $this->getDriver($driver);
         if ($driver->has($key)) {
-            return $this->serializer ? $this->serializer->decode($driver->get($key)) : \igbinary_unserialize($driver->get($key));
+            return $this->serializer ? $this->serializer->decode($driver->get($key)) : \msgpack_pack($driver->get($key));
         }
         $result = $function();
-        $driver->set($key, $this->serializer ? $this->serializer->encode($result) : \igbinary_serialize($result), $duration);
+        $driver->set($key, $this->serializer ? $this->serializer->encode($result) : \msgpack_pack($result), $duration);
         return $result;
     }
 
