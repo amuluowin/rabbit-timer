@@ -21,7 +21,7 @@ class ArrayCache extends AbstractCache implements CacheInterface
         parent::__construct();
     }
 
-    public function get(string $key, mixed $default = null): mixed
+    public function get($key, mixed $default = null): mixed
     {
         $key = $this->buildKey($key);
         $value = $this->getValue($key);
@@ -55,7 +55,7 @@ class ArrayCache extends AbstractCache implements CacheInterface
         return $column['data'];
     }
 
-    public function set(string $key, mixed $value, null|int|\DateInterval $ttl = null): bool
+    public function set($key, mixed $value, $ttl = null): bool
     {
         $key = $this->buildKey($key);
         if ($this->serializer === null) {
@@ -97,7 +97,7 @@ class ArrayCache extends AbstractCache implements CacheInterface
         }
     }
 
-    public function delete(string $key): bool
+    public function delete($key): bool
     {
         $this->buildKey($key);
         unset($this->tableInstance[$key]);
@@ -110,7 +110,7 @@ class ArrayCache extends AbstractCache implements CacheInterface
         return true;
     }
 
-    public function getMultiple(iterable $keys, mixed $default = null): iterable
+    public function getMultiple($keys, mixed $default = null): iterable
     {
         foreach ($keys as $key) {
             $results[$key] = $default;
@@ -125,7 +125,7 @@ class ArrayCache extends AbstractCache implements CacheInterface
         return $results;
     }
 
-    public function setMultiple(iterable $values, null|int|\DateInterval $ttl = null): bool
+    public function setMultiple($values, $ttl = null): bool
     {
         $ret = true;
         foreach ($values as $key => $value) {
@@ -140,7 +140,7 @@ class ArrayCache extends AbstractCache implements CacheInterface
         return (bool)$ret;
     }
 
-    public function deleteMultiple(iterable $keys): bool
+    public function deleteMultiple($keys): bool
     {
         foreach ($keys as $key) {
             unset($this->tableInstance[$this->buildKey($key)]);
@@ -148,7 +148,7 @@ class ArrayCache extends AbstractCache implements CacheInterface
         return true;
     }
 
-    public function has(string $key): bool
+    public function has($key): bool
     {
         $key = $this->buildKey($key);
         return isset($this->tableInstance[$key]);

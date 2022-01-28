@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace Rabbit\Cache;
 
 use Psr\SimpleCache\CacheInterface;
-use Rabbit\Base\App;
 use Rabbit\Base\Table\Table;
 use Rabbit\Parser\ParserInterface;
-use Throwable;
 
 /**
  * Class TableCache
@@ -48,7 +46,7 @@ class TableCache extends AbstractCache implements CacheInterface
         return $table;
     }
 
-    public function get(string $key, mixed $default = null): mixed
+    public function get($key, mixed $default = null): mixed
     {
         $key = $this->buildKey($key);
         $value = $this->getValue($key);
@@ -98,7 +96,7 @@ class TableCache extends AbstractCache implements CacheInterface
         return $this->tableInstance->del($key);
     }
 
-    public function set(string $key, mixed $value, null|int|\DateInterval $ttl = null): bool
+    public function set($key, mixed $value, $ttl = null): bool
     {
         $key = $this->buildKey($key);
         if ($this->serializer === null) {
@@ -168,7 +166,7 @@ class TableCache extends AbstractCache implements CacheInterface
         return $setKey;
     }
 
-    public function delete(string $key): bool
+    public function delete($key): bool
     {
         $this->buildKey($key);
         return $this->deleteValue($key);
@@ -187,7 +185,7 @@ class TableCache extends AbstractCache implements CacheInterface
         return (bool)$ret;
     }
 
-    public function getMultiple(iterable $keys, mixed $default = null): iterable
+    public function getMultiple($keys, mixed $default = null): iterable
     {
         $newKeys = [];
         foreach ($keys as $key) {
@@ -219,7 +217,7 @@ class TableCache extends AbstractCache implements CacheInterface
         return $results;
     }
 
-    public function setMultiple(iterable $values, null|int|\DateInterval $ttl = null): bool
+    public function setMultiple($values, $ttl = null): bool
     {
         $data = [];
         foreach ($values as $key => $value) {
@@ -244,7 +242,7 @@ class TableCache extends AbstractCache implements CacheInterface
         return (bool)$ret;
     }
 
-    public function deleteMultiple(iterable $keys): bool
+    public function deleteMultiple($keys): bool
     {
         $ret = true;
         foreach ($keys as $key) {
@@ -254,7 +252,7 @@ class TableCache extends AbstractCache implements CacheInterface
         return (bool)$ret;
     }
 
-    public function has(string $key): bool
+    public function has($key): bool
     {
         $key = $this->buildKey($key);
         $value = $this->getValue($key);

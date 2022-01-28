@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Rabbit\Cache;
 
 use Psr\SimpleCache\CacheInterface;
-use Psr\SimpleCache\InvalidArgumentException;
 use Rabbit\Parser\ParserInterface;
 
 /**
@@ -55,17 +54,17 @@ class Cache implements CacheInterface
         return $this->drivers;
     }
 
-    public function get(string $key, mixed $default = null): mixed
+    public function get($key, mixed $default = null): mixed
     {
         return $this->getDriver()->get($key, $default);
     }
 
-    public function set(string $key, mixed $value, null|int|\DateInterval $ttl = null): bool
+    public function set($key, mixed $value, $ttl = null): bool
     {
         return $this->getDriver()->set($key, $value, $ttl);
     }
 
-    public function delete(string $key): bool
+    public function delete($key): bool
     {
         return $this->getDriver()->delete($key);
     }
@@ -75,22 +74,22 @@ class Cache implements CacheInterface
         return $this->getDriver()->clear();
     }
 
-    public function getMultiple(iterable $keys, mixed $default = null): iterable
+    public function getMultiple($keys, mixed $default = null): iterable
     {
         return $this->getDriver()->getMultiple($keys, $default);
     }
 
-    public function setMultiple(iterable $values, null|int|\DateInterval $ttl = null): bool
+    public function setMultiple($values, $ttl = null): bool
     {
         return $this->getDriver()->setMultiple($values, $ttl);
     }
 
-    public function deleteMultiple(iterable $keys): bool
+    public function deleteMultiple($keys): bool
     {
         return $this->getDriver()->deleteMultiple($keys);
     }
 
-    public function has(string $key): bool
+    public function has($key): bool
     {
         return $this->getDriver()->has($key);
     }
