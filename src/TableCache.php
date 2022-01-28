@@ -48,12 +48,7 @@ class TableCache extends AbstractCache implements CacheInterface
         return $table;
     }
 
-    /**
-     * @param string $key
-     * @param null $default
-     * @return bool|mixed|null|string
-     */
-    public function get($key, $default = null)
+    public function get(string $key, mixed $default = null): mixed
     {
         $key = $this->buildKey($key);
         $value = $this->getValue($key);
@@ -66,12 +61,7 @@ class TableCache extends AbstractCache implements CacheInterface
         }
     }
 
-    /**
-     * @param string $key
-     * @param int $nowtime
-     * @return bool|string
-     */
-    private function getValue(string $key, int $nowtime = null)
+    private function getValue(string $key, int $nowtime = null): bool|string
     {
         if (empty($key)) {
             return '';
@@ -97,11 +87,7 @@ class TableCache extends AbstractCache implements CacheInterface
         return $column['data'] . $nextValue;
     }
 
-    /**
-     * @param string $key
-     * @return bool
-     */
-    private function deleteValue(string $key)
+    private function deleteValue(string $key): bool
     {
         $column = $column = $this->tableInstance->get($key);
         if ($column) {
@@ -112,14 +98,7 @@ class TableCache extends AbstractCache implements CacheInterface
         return $this->tableInstance->del($key);
     }
 
-    /**
-     * @param string $key
-     * @param mixed $value
-     * @param null $ttl
-     * @return bool
-     * @throws Throwable
-     */
-    public function set($key, $value, $ttl = null)
+    public function set(string $key, mixed $value, null|int|\DateInterval $ttl = null): bool
     {
         $key = $this->buildKey($key);
         if ($this->serializer === null) {
@@ -131,14 +110,7 @@ class TableCache extends AbstractCache implements CacheInterface
         return $this->setValue($key, $value, $ttl);
     }
 
-    /**
-     * @param string $key
-     * @param string $value
-     * @param float|null $duration
-     * @return bool
-     * @throws Throwable
-     */
-    private function setValue(string $key, string $value, ?float $duration): bool
+    private function setValue(string $key, string $value, null|int|float $duration): bool
     {
         $this->gc();
         $duration = !empty($duration) && $duration > $this->maxLive ? $this->maxLive : $duration;
@@ -147,14 +119,9 @@ class TableCache extends AbstractCache implements CacheInterface
         return $this->setValueRec($key, $value, $expire, $valueLength) !== null;
     }
 
-    /**
-     * @param bool $force
-     * @throws Throwable
-     */
-    private function gc(bool $force = false)
+    private function gc(bool $force = false): void
     {
         if ($force || mt_rand(0, 1000000) < $this->gcProbability) {
-            App::info("TableCache GC begin");
             $i = 100000;
             $table = $this->tableInstance;
             foreach ($table as $key => $column) {
@@ -167,18 +134,9 @@ class TableCache extends AbstractCache implements CacheInterface
                     $i = 100000;
                 }
             }
-            App::info("TableCache GC end.");
         }
     }
 
-    /**
-     * @param string $key
-     * @param string $value
-     * @param float|null $expire
-     * @param int $valueLength
-     * @param int $num
-     * @return string|null
-     */
     private function setValueRec(string $key, string &$value, ?float $expire, int $valueLength, int $num = 0): ?string
     {
         $start = $num * $this->dataLength;
@@ -210,36 +168,26 @@ class TableCache extends AbstractCache implements CacheInterface
         return $setKey;
     }
 
-    /**
-     * @param string $key
-     * @return bool
-     */
-    public function delete($key)
+    public function delete(string $key): bool
     {
         $this->buildKey($key);
         return $this->deleteValue($key);
     }
 
-    /**
-     * @return bool|void
-     */
-    public function clear()
+    public function clear(): bool
     {
         $table = [];
         foreach ($this->tableInstance as $key => $column) {
             $table[] = $key;
         }
+        $ret = true;
         foreach ($table as $key) {
-            $this->tableInstance->del($key);
+            $ret &= $this->tableInstance->del($key);
         }
+        return (bool)$ret;
     }
 
-    /**
-     * @param iterable $keys
-     * @param null $default
-     * @return array|iterable
-     */
-    public function getMultiple($keys, $default = null)
+    public function getMultiple(iterable $keys, mixed $default = null): iterable
     {
         $newKeys = [];
         foreach ($keys as $key) {
@@ -261,11 +209,7 @@ class TableCache extends AbstractCache implements CacheInterface
         return $results;
     }
 
-    /**
-     * @param array $keys
-     * @return array
-     */
-    protected function getValues(array $keys)
+    protected function getValues(array $keys): array
     {
         $results = [];
         foreach ($keys as $key) {
@@ -275,13 +219,7 @@ class TableCache extends AbstractCache implements CacheInterface
         return $results;
     }
 
-    /**
-     * @param iterable $values
-     * @param null $ttl
-     * @return array|bool
-     * @throws Throwable
-     */
-    public function setMultiple($values, $ttl = null)
+    public function setMultiple(iterable $values, null|int|\DateInterval $ttl = null): bool
     {
         $data = [];
         foreach ($values as $key => $value) {
@@ -296,45 +234,27 @@ class TableCache extends AbstractCache implements CacheInterface
         return $this->setValues($data, $ttl);
     }
 
-    /**
-     * @param array $data
-     * @param $duration
-     * @return array
-     * @throws Throwable
-     */
-    private function setValues(array $data, $duration)
+    private function setValues(array $data, null|int|float $duration): bool
     {
-        $failedKeys = [];
+        $ret = true;
         foreach ($data as $key => $value) {
-            if ($this->setValue($key, $value, $duration) === false) {
-                $failedKeys[] = $key;
-            }
+            $ret &= $this->setValue($key, $value, $duration);
         }
 
-        return $failedKeys;
+        return (bool)$ret;
     }
 
-    /**
-     * @param iterable $keys
-     * @return array|bool
-     */
-    public function deleteMultiple($keys)
+    public function deleteMultiple(iterable $keys): bool
     {
-        $failedKeys = [];
-        foreach ($keys as $key => $value) {
-            if ($this->deleteValue($this->buildKey($key)) === false) {
-                $failedKeys[] = $key;
-            }
+        $ret = true;
+        foreach ($keys as $key) {
+            $ret &= $this->deleteValue($this->buildKey($key));
         }
 
-        return $failedKeys;
+        return (bool)$ret;
     }
 
-    /**
-     * @param string $key
-     * @return bool
-     */
-    public function has($key)
+    public function has(string $key): bool
     {
         $key = $this->buildKey($key);
         $value = $this->getValue($key);

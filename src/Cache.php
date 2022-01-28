@@ -16,11 +16,6 @@ class Cache implements CacheInterface
 {
     private string $driver = 'memory';
 
-    /**
-     * Cache constructor.
-     * @param array $drivers
-     * @param ParserInterface|null $serializer
-     */
     public function __construct(private array $drivers, private ?ParserInterface $serializer = null)
     {
     }
@@ -44,15 +39,7 @@ class Cache implements CacheInterface
         return $drivers[$currentDriver];
     }
 
-    /**
-     * @param string $key
-     * @param callable $function
-     * @param float $duration
-     * @param string $driver
-     * @return mixed
-     * @throws InvalidArgumentException
-     */
-    public function cache(string $key, callable $function, float $duration = 0, string $driver = 'memory')
+    public function cache(string $key, callable $function, float $duration = 0, string $driver = 'memory'): mixed
     {
         $driver = $this->getDriver($driver);
         if ($driver->has($key)) {
@@ -63,93 +50,47 @@ class Cache implements CacheInterface
         return $result;
     }
 
-    /**
-     * @return array
-     */
     private function getDrivers(): array
     {
         return $this->drivers;
     }
 
-    /**
-     * @param string $key
-     * @param null $default
-     * @return mixed
-     * @throws InvalidArgumentException
-     */
-    public function get($key, $default = null)
+    public function get(string $key, mixed $default = null): mixed
     {
         return $this->getDriver()->get($key, $default);
     }
 
-    /**
-     * @param string $key
-     * @param mixed $value
-     * @param null $ttl
-     * @return bool
-     * @throws InvalidArgumentException
-     */
-    public function set($key, $value, $ttl = null)
+    public function set(string $key, mixed $value, null|int|\DateInterval $ttl = null): bool
     {
         return $this->getDriver()->set($key, $value, $ttl);
     }
 
-    /**
-     * @param string $key
-     * @return bool
-     * @throws InvalidArgumentException
-     */
-    public function delete($key)
+    public function delete(string $key): bool
     {
         return $this->getDriver()->delete($key);
     }
 
-    /**
-     * @return bool
-     */
-    public function clear()
+    public function clear(): bool
     {
         return $this->getDriver()->clear();
     }
 
-    /**
-     * @param iterable $keys
-     * @param null $default
-     * @return iterable
-     * @throws InvalidArgumentException
-     */
-    public function getMultiple($keys, $default = null)
+    public function getMultiple(iterable $keys, mixed $default = null): iterable
     {
         return $this->getDriver()->getMultiple($keys, $default);
     }
 
-    /**
-     * @param iterable $values
-     * @param null $ttl
-     * @return bool
-     * @throws InvalidArgumentException
-     */
-    public function setMultiple($values, $ttl = null)
+    public function setMultiple(iterable $values, null|int|\DateInterval $ttl = null): bool
     {
         return $this->getDriver()->setMultiple($values, $ttl);
     }
 
-    /**
-     * @param iterable $keys
-     * @return bool
-     * @throws InvalidArgumentException
-     */
-    public function deleteMultiple($keys)
+    public function deleteMultiple(iterable $keys): bool
     {
         return $this->getDriver()->deleteMultiple($keys);
     }
 
-    /**
-     * @param string $key
-     * @return bool
-     * @throws InvalidArgumentException
-     */
-    public function has($key)
+    public function has(string $key): bool
     {
         return $this->getDriver()->has($key);
     }
