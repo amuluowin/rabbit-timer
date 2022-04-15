@@ -121,7 +121,7 @@ class TableCache extends AbstractCache implements CacheInterface
     {
         if ($force || mt_rand(0, 1000000) < $this->gcProbability) {
             $i = 100000;
-            $table = $this->tableInstance;
+            $table = $this->tableInstance->table;
             foreach ($table as $key => $column) {
                 if ($column['expire'] > 0 && $column['expire'] < time()) {
                     $this->deleteValue($key);
@@ -175,7 +175,7 @@ class TableCache extends AbstractCache implements CacheInterface
     public function clear(): bool
     {
         $table = [];
-        foreach ($this->tableInstance as $key => $column) {
+        foreach ($this->tableInstance->table as $key => $column) {
             $table[] = $key;
         }
         $ret = true;
