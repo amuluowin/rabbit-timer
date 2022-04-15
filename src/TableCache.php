@@ -5,45 +5,25 @@ declare(strict_types=1);
 namespace Rabbit\Cache;
 
 use Psr\SimpleCache\CacheInterface;
-use Rabbit\Base\Table\Table;
 use Rabbit\Parser\ParserInterface;
+use Swoole\Table;
 
-/**
- * Class TableCache
- * @package Rabbit\Cache
- */
 class TableCache extends AbstractCache implements CacheInterface
 {
     private Table $tableInstance;
     private int $maxLive = 3000000;
-    private float $gcSleep = 0.01;
+    private int $gcSleep = 100;
     private int $gcProbability = 100;
 
-    /**
-     * TableCache constructor.
-     * @param int $size
-     * @param int $dataLength
-     * @param ParserInterface|null $serializer
-     */
     public function __construct(int $size = 1024, private int $dataLength = 8192, private ?ParserInterface $serializer = null)
     {
         parent::__construct();
-        $this->tableInstance = $this->initCacheTable($size, $dataLength);
-    }
-
-    /**
-     * @param int $size
-     * @param int $dataLength
-     * @return Table
-     */
-    private function initCacheTable(int $size, int $dataLength): Table
-    {
-        $table = new Table('cache', $size);
+        $table = new Table($size);
         $table->column('expire', Table::TYPE_STRING, 11);
         $table->column('nextId', Table::TYPE_STRING, 35);
         $table->column('data', Table::TYPE_STRING, $dataLength);
         $table->create();
-        return $table;
+        $this->tableInstance = $table;
     }
 
     public function get($key, mixed $default = null): mixed
@@ -121,16 +101,19 @@ class TableCache extends AbstractCache implements CacheInterface
     {
         if ($force || mt_rand(0, 1000000) < $this->gcProbability) {
             $i = 100000;
-            $table = $this->tableInstance->table;
-            foreach ($table as $key => $column) {
+            $dels = [];
+            foreach ($this->tableInstance as $key => $column) {
                 if ($column['expire'] > 0 && $column['expire'] < time()) {
-                    $this->deleteValue($key);
+                    $dels[] = $key;
                 }
                 $i--;
                 if ($i <= 0) {
-                    \Swoole\Coroutine::sleep($this->gcSleep);
+                    usleep($this->gcSleep);
                     $i = 100000;
                 }
+            }
+            foreach ($dels as $key) {
+                $this->deleteValue($key);
             }
         }
     }
@@ -175,7 +158,7 @@ class TableCache extends AbstractCache implements CacheInterface
     public function clear(): bool
     {
         $table = [];
-        foreach ($this->tableInstance->table as $key => $column) {
+        foreach ($this->tableInstance as $key => $column) {
             $table[] = $key;
         }
         $ret = true;
